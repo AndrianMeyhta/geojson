@@ -19,12 +19,20 @@ for feature in data['features']:
     properties = feature['properties']
     coordinates = feature['geometry']['coordinates']
 
+    template = {
+        'type' : 'Feature',
+        'geometry' : {
+            'type': 'MultiPolygon',
+            'coordinates': coordinates
+        }
+    }
+
     # Simpan data ke tabel des_kel
     cur = conn.cursor()
     cur.execute("""
-        INSERT INTO desloc (OBJECTID, NAMOBJ, KDCPUM, WADMKC, WADMKD, WADMKK, WADMPR, luas, coordinates)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-    """, (properties['OBJECTID'], properties['NAMOBJ'], properties['KDCPUM'], properties['WADMKC'], properties['WADMKD'], properties['WADMKK'], properties['WADMPR'], properties['luas'], json.dumps(coordinates)))
+        INSERT INTO desloc2 (OBJECTID, NAMOBJ, KDCPUM, WADMKC, WADMKD, WADMKK, WADMPR, luas, shape_length, shape_area, coordinates)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    """, (properties['OBJECTID'], properties['NAMOBJ'], properties['KDCPUM'], properties['WADMKC'], properties['WADMKD'], properties['WADMKK'], properties['WADMPR'], properties['luas'],properties['SHAPE_Length'],properties['SHAPE_Area'], json.dumps(template)))
     conn.commit()
 
     cur.close()
